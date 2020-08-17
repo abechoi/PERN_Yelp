@@ -6,6 +6,7 @@
 require("dotenv").config();
 const express = require("express");
 const morgan = require("morgan");
+const db = require("./db");
 
 const app = express();
 
@@ -26,34 +27,62 @@ app.use(express.json());
 
 // GET    | Retrieve all restaurants  | /api/v1/restaurants
 // http://localhost:4000/getRestaurants
-app.get("/api/v1/restaurants", (req, res) => {
+app.get("/api/v1/restaurants", async (req, res) => {
+
   //console.log('Route handler');
-  res.status(200).json({
-    status: "success",
-    data: {
-      restaurant: ["mcdonalds", "wendys"]
-    }
-  });
+
+  try{
+    const results = await db.query("SELECT * FROM restaurants"); // use await since db.query is a promise, then add async at the top.
+    console.log(results);
+    res.status(200).json({
+      status: "success",
+      results: results.rows.length,
+      data: {
+        restaurants: results.rows
+      }
+    });
+  }
+  catch(err){console.log(err)}
+
 });
 // GET    | Retrieve one restaurant    | /api/v1/restaurants/:id
-app.get("/api/v1/restaurants/:id", (req, res) => {
-  console.log(req.params);
-  res.status(200).json({
-    status: "success",
-    data: {
-      restaurant: "raising canes"
-    }
-  });
+app.get("/api/v1/restaurants/:id", async (req, res) => {
+  console.log(req.params.id);
+
+  try{
+    //const results = await db.query(`SELECT * FROM restaurants WHERE id=${req.params.id}`); // BAD for sqlinjections
+    // parameterized query, $1 = arg2
+    const results = await db.query("SELECT * FROM restaurants WHERE id=$1", [req.params.id]);
+    res.status(200).json({
+      status: "success",
+      data: {
+        restaurant: results.rows[0]
+      }
+    });
+  }
+  catch(err){console.log(err)}
+
 });
 // POST   | Create restaurant         | /api/v1/restaurants
-app.post("/api/v1/restaurants", (req, res) => {
-  console.log(req.body);
-  res.status(201).json({
-    status: "success",
-    data: {
-      restaurant: "raising canes"
-    }
-  });
+app.post("/api/v1/restaurants", async (req, res) => {
+
+  try{
+    // add returning * for an output
+    const results = await db.query("INSERT INTO restaurants (name, location, price_range) values ($1, $2, $3) returning *", [
+      req.body.name,
+      req.body.location,
+      req.body.price_range
+    ]);
+    console.log(results);
+    res.status(201).json({
+      status: "success",
+      data: {
+        restaurant: results.rows[0]
+      }
+    });
+  }
+  catch(err){console.log(err)}
+
 });
 // PUT    | Update restaurant         | /api/v1/restaurants/:id
 app.put("/api/v1/restaurants/:id", (req, res) => {
