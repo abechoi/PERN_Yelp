@@ -1,6 +1,23 @@
-import React from 'react'
+import React, { useEffect, useContext } from 'react';
+import RestaurantFinder from '../api/RestaurantFinder';
+import { RestaurantContext } from '../contexts/RestaurantContext';
 
-const RestaurantList = () => {
+const RestaurantList = props => {
+
+  const { restaurants, setRestaurants } = useContext(RestaurantContext);
+
+  useEffect(() => {
+    // To avoid useEffect async/await error by returning something within 
+    // useEffect, create a new variable for async/await
+    const fetchData = async () => {
+      try{
+        const response = await RestaurantFinder.get("/");
+        setRestaurants(response.data.data.restaurants);
+      }catch(err){console.log(err)}
+    }
+    fetchData();
+  }, []);
+
   return (
     <div className="list-group">
       <table className="table table-hover table-dark">
