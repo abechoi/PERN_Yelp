@@ -1,10 +1,12 @@
 import React, { useEffect, useContext } from 'react';
 import RestaurantFinder from '../api/RestaurantFinder';
 import { RestaurantContext } from '../contexts/RestaurantContext';
+import { useHistory } from 'react-router-dom';
 
 const RestaurantList = props => {
 
   const { restaurants, setRestaurants } = useContext(RestaurantContext);
+  let history = useHistory();
 
   useEffect(() => {
     // To avoid useEffect async/await error by returning something within 
@@ -16,7 +18,18 @@ const RestaurantList = props => {
       }catch(err){console.log(err)}
     }
     fetchData();
-  }, []);
+  }, []); 
+
+  const handleDelete = async id => {
+    try{
+      const response = await RestaurantFinder.delete(`/${id}`);
+      setRestaurants(restaurants.filter(restaurant => restaurant.id !== id));
+    }catch(err){console.log(err)}
+  }
+
+  const handleUpdate = id => {
+      history.push(`/restaurants/${id}/update`);
+  }
 
   return (
     <div className="list-group">
@@ -39,8 +52,8 @@ const RestaurantList = props => {
               <td>{restaurant.location}</td>
               <td>{"$".repeat(restaurant.price_range)}</td>
               <td>Rating</td>
-              <td><button className="btn btn-warning">Update</button></td>
-              <td><button className="btn btn-danger">Delete</button></td>
+              <td onClick={() => handleUpdate(restaurant.id)}><button className="btn btn-warning">Update</button></td>
+              <td onClick={() => handleDelete(restaurant.id)}><button className="btn btn-danger">Delete</button></td>
             </tr>
             );
           })}
