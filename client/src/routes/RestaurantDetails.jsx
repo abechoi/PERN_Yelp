@@ -2,8 +2,8 @@ import React, { useEffect, useContext } from 'react'
 import RestaurantFinder from '../api/RestaurantFinder'
 import { useParams } from 'react-router-dom'
 import { RestaurantContext } from '../contexts/RestaurantContext';
-import StarRating from '../components/StarRating';
 import Reviews from '../components/Reviews';
+import AddReview from '../components/AddReview';
 
 const RestaurantDetails = () => {
 
@@ -16,7 +16,8 @@ const RestaurantDetails = () => {
 
       try{
         const response = await RestaurantFinder.get(`/${id}`);
-        setSelectedRestaurant(response.data.data.restaurant);
+        console.log(response.data.data)
+        setSelectedRestaurant(response.data.data);
       }catch(err){console.log(err)}
     }
     fetchData();
@@ -26,9 +27,11 @@ const RestaurantDetails = () => {
     <div>
       {selectedRestaurant && (
         <>
+          <h1 className="text-center display-1">{selectedRestaurant.restaurant.name}</h1>
           <div className="mt-3">
-            <Reviews />
+            <Reviews reviews={selectedRestaurant.reviews}/>
           </div>
+          <AddReview />
         </>
       )}
     </div>

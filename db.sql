@@ -33,6 +33,7 @@ CREATE TABLE reviews (
 );
 
 INSERT INTO reviews (restaurant_id, name, review, rating) values (1, 'Abe', 'They definitely put cocaine in their sauce!', 5);
+INSERT INTO reviews (restaurant_id, name, review, rating) values (1, 'Choi', 'I am addicted to this stuff man.', 5);
 INSERT INTO reviews (restaurant_id, name, review, rating) values (2, 'Hae-In', 'Never been to this restaurant, because I hate the name.', 1);
 INSERT INTO reviews (restaurant_id, name, review, rating) values (3, 'Jong-Hae', 'They have a great porterhouse.', 5);
 INSERT INTO reviews (restaurant_id, name, review, rating) values (4, 'Choi', 'How are you supposed to drink a frosty through a straw?', 2);
