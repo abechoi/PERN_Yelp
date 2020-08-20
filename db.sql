@@ -41,3 +41,11 @@ INSERT INTO reviews (restaurant_id, name, review, rating) values (5, 'Jong-In', 
 INSERT INTO reviews (restaurant_id, name, review, rating) values (6, 'Abe', 'I once ate a whole cravecase by myself.', 4);
 INSERT INTO reviews (restaurant_id, name, review, rating) values (7, 'Hae-In', 'Bring back the mcribs!', 3);
 INSERT INTO reviews (restaurant_id, name, review, rating) values (8, 'Hae-In', 'The pizza is decent here.', 3);
+
+SELECT * FROM restaurants INNER JOIN reviews ON restaurants.id = reviews.restaurant_id;
+SELECT * FROM restaurants LEFT JOIN reviews ON restaurants.id = reviews.restaurant_id;
+SELECT * FROM restaurants RIGHT JOIN reviews ON restaurants.id = reviews.restaurant_id;
+SELECT * FROM restaurants FULL OUTER JOIN reviews ON restaurants.id = reviews.restaurant_id;
+
+SELECT * FROM restaurants LEFT JOIN (select restaurant_id, COUNT(*), TRUNC(AVG(rating), 1) AS avg_rating FROM reviews GROUP BY restaurant_id) reviews ON restaurants.id = reviews.restaurant_id;
+SELECT * FROM restaurants LEFT JOIN (select restaurant_id, COUNT(*), TRUNC(AVG(rating), 1) AS avg_rating FROM reviews GROUP BY restaurant_id) reviews ON restaurants.id = reviews.restaurant_id WHERE id=$1;

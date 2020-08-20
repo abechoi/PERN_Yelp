@@ -33,8 +33,11 @@ app.get("/api/v1/restaurants", async (req, res) => {
 
   //console.log('Route handler');
   try{
-    const results = await db.query("SELECT * FROM restaurants"); // use await since db.query is a promise, then add async at the top.
-    //console.log(results);
+    //const results = await db.query("SELECT * FROM restaurants"); // use await since db.query is a promise, then add async at the top.
+    const results = await db.query("SELECT * FROM restaurants LEFT JOIN (select restaurant_id, COUNT(*), TRUNC(AVG(rating), 1) AS avg_rating FROM reviews GROUP BY restaurant_id) reviews ON restaurants.id = reviews.restaurant_id");
+    
+    console.log(results);
+    
     res.status(200).json({
       status: "success",
       results: results.rows.length,
@@ -52,11 +55,10 @@ app.get("/api/v1/restaurants/:id", async (req, res) => {
   try{
     //const results = await db.query(`SELECT * FROM restaurants WHERE id=${req.params.id}`); // BAD for sqlinjections
     // parameterized query, $1 = arg2
-    const restaurant = await db.query("SELECT * FROM restaurants WHERE id=$1", [req.params.id]);
+    const restaurant = await db.query("SELECT * FROM restaurants LEFT JOIN (select restaurant_id, COUNT(*), TRUNC(AVG(rating), 1) AS avg_rating FROM reviews GROUP BY restaurant_id) reviews ON restaurants.id = reviews.restaurant_id WHERE id=$1", [req.params.id]);
 
     const reviews = await db.query("SELECT * FROM reviews WHERE restaurant_id=$1", [req.params.id]);
-    console.log(reviews);
-
+    //console.log(reviews);
     res.status(200).json({
       status: "success",
       data: {

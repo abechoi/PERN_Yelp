@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom'
 import { RestaurantContext } from '../contexts/RestaurantContext';
 import Reviews from '../components/Reviews';
 import AddReview from '../components/AddReview';
+import StarRating from '../components/StarRating';
 
 const RestaurantDetails = () => {
 
@@ -28,6 +29,12 @@ const RestaurantDetails = () => {
       {selectedRestaurant && (
         <>
           <h1 className="text-center display-1">{selectedRestaurant.restaurant.name}</h1>
+          <div className="text-center">
+            <StarRating rating={selectedRestaurant.restaurant.avg_rating}/>
+            <span className="text-warning m;-1">
+              {selectedRestaurant.restaurant.count ? `(${selectedRestaurant.restaurant.count})` : "(0)"}
+            </span>
+          </div>
           <div className="mt-3">
             <Reviews reviews={selectedRestaurant.reviews}/>
           </div>
